@@ -93,6 +93,17 @@ def build(start, end, node):
     build(mid+1, end, node*2+1)
     tree[node] = merge(tree[node*2], tree[node*2+1])
 
+def update(key, start, end, node):
+    if start == end:
+        tree[node] += 1
+        return
+    mid = start + (end - start)/2
+    if key <= mid:
+        update(key, start, mid, node*2)
+    else:
+        update(key, mid+1, end, node*2+1)
+    tree[node] = tree[node*2] + tree[node*2+1]
+
 
 def operation(value):
     pass
@@ -103,8 +114,10 @@ def update(index, value, start, end, node):
         tree[node] = operation(tree[node], value)
         return
     mid = (start + end)/2
-    update(index, value, start, mid, node*2)
-    update(index, value, mid+1, end, node*2+1)
+    if index <= mid : 
+        update(index, value, start, mid, node*2)
+    else :
+        update(index, value, mid+1, end, node*2+1)
     tree[node] = merge(tree[node*2], tree[node*2]+1)
 
 

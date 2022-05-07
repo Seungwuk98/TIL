@@ -1,22 +1,37 @@
-s = 'asdf?    ?   asdfasdfdfsf? dfd?Fs?Dfs?D? a?Sdf?asdf??   ?Asdf A?Sdf'
-s = s.lower()
+from decimal import *
+from math import *
 
-result = ''
-for x in s:
-    if x != ' ':
-        result += x
 
-p = ""
-result2 = ''
-for x in result:
-    if p in '?!.,' and x not in '?!,.':
-        result2 += ' '
-    result2 += x
-    p = x
-result = result2.split()
-result[0] = result[0].capitalize()
-for i in range(1, len(result)):
-    if result[i-1][-1] in '?!,.':
-        result[i] = result[i].capitalize()
+def mat_cross(a, b):
+    ret = [[0, 0], [0, 0]]
+    for i in range(2):
+        for j in range(2):
+            for k in range(2):
+                ret[i][j] += a[i][k] * b[k][j]
+                ret[i][j] %= 1000
+    return ret
 
-print(' '.join(result))
+
+def mat_pow(c, n):
+    ret = [[1, 0], [0, 1]]
+    while n:
+        if n & 1:
+            ret = mat_cross(ret, c)
+        c = mat_cross(c, c)
+        n >>= 1
+    return ret
+
+
+for _ in range(int(input())):
+    n = int(input())
+    if n == 1:
+        X = 5
+    elif n == 2:
+        X = 27
+    else:
+        X = [[6, -4], [1, 0]]
+        X = mat_pow(X, n-2)
+        C = 28*X[0][0] + 6*X[0][1]
+        X = (int(C)-1) % 1000
+
+    print('Case #{0:}: {1:0>3}'.format(_+1, X))
