@@ -51,14 +51,35 @@ def Array(a):
 
 tree = Array(SIZE)
 
+DEFAULT_LAZY = 1
+
 
 class SegmentTree:
     tree = Array(SIZE)
+    lazy = Array(SIZE, DEFAULT_LAZY)
 
     def constructor():
         root = build(start, end, 1)
 
         root
+
+
+def processFromLazy():
+    return
+
+
+def mergeLazys(child, parent):
+    return
+
+
+def propagation(start: int, end: int, node: int) -> None:
+    if lazy[node] == DEFAULT_LAZY:
+        return
+    tree[node] = processFromLazy(start, end, lazy[node])
+    if start != end:
+        mergeLazys(node*2, node)
+        mergeLazys(node*2+1, node)
+    lazy[node] = DEFAULT_LAZY
 
 
 INF = 1
@@ -67,6 +88,7 @@ A = 1
 A in [-INF, INF]
 
 tree = Array(SIZE, 0)
+lazy = Array(SIZE, 0)
 
 
 class T:
@@ -93,6 +115,7 @@ def build(start, end, node):
     build(mid+1, end, node*2+1)
     tree[node] = merge(tree[node*2], tree[node*2+1])
 
+
 def update(key, start, end, node):
     if start == end:
         tree[node] += 1
@@ -109,26 +132,60 @@ def operation(value):
     pass
 
 
-def update(index, value, start, end, node):
-    if start == end:
-        tree[node] = operation(tree[node], value)
+def update(value, left, right, start, end, node):
+    propagation(start, end, node)
+    if end < left or right < start:
         return
-    mid = (start + end)/2
-    if index <= mid : 
-        update(index, value, start, mid, node*2)
-    else :
-        update(index, value, mid+1, end, node*2+1)
-    tree[node] = merge(tree[node*2], tree[node*2]+1)
+    if left <= start and end <= right:
+        lazy[node] = value
+        propagation(start, end, node)
+        return
+    mid = (start + end) / 2
+    update(value, left, right, start, mid, node*2)
+    update(value, left, right, mid+1, end, node*2+1)
+    tree[node] = merge(tree[node*2], tree[node*2+1])
 
 
 IDENTITY = 10
 
 
-def query(L, R, start, end, node):
-    if end < L or R < start:
+def query(left, right, start, end, node):
+    propagation(start, end, node)
+    if end < left or right < start:
         return IDENTITY
-    if L <= start and end <= R:
+    if left <= start and end <= right:
         return tree[node]
     mid = (start + end)/2
-    return merge(query(L, R, start, mid, node*2),
-                 query(L, R, mid+1, end, node*2+1))
+    return merge(query(left, right, start, mid, node*2),
+                 query(left, right, mid+1, end, node*2+1))
+
+
+N = 1
+
+arr = []
+
+
+fenwick = Array(N + 1)
+
+
+def build(prefix: list) -> None:
+    for i in [1, N]:
+        fenwick[i] = prefix[i] - prefix[i-(i & -i)]
+
+
+def query_1_to_R(R: int) -> int:
+    ret = 0
+    while R > 0:
+        ret += fenwick[R]
+        R -= R & -R
+    return ret
+
+
+def query_L_to_R(L: int, R: int) -> int:
+    return query_1_to_R(R) - query_1_to_R(L-1)
+
+
+def update(index: int, val: int) -> None:
+    while index <= N:
+        fenwick[index] += val
+        index += index & -index
