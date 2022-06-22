@@ -1,18 +1,9 @@
-from random import randint
 
-n = 10
-arr = [randint(1, 10) for _ in range(n)]
-m = 10
-print(n)
-print(*arr)
-print(m)
-for _ in range(m):
-    op = randint(1, 10) & 1
-    i, j = [randint(1, 10) for _ in range(2)]
-    if i > j:
-        i, j = j, i
-    if op:
-        x, y = [randint(1, 10) for _ in range(2)]
-        print(op, i, j, x, y)
-    else:
-        print(i, j)
+for i in range(10):
+    s1 = []
+    with open('answers/answer_{}.txt'.format(i), 'r') as f:
+        s1 = f.readlines()
+    s2 = []
+    with open('output1/output_{}.txt'.format(i), 'r') as f:
+        s2 = f.readlines()
+    print(*[(s1[x], s2[x], x) for x in range(len(s1)) if s1[x] != s2[x]])

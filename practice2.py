@@ -1,10 +1,5 @@
-s1 = []
-s2 = []
-for i in range(10):
-    s1.append(input())
-for i in range(10):
-    s2.append(input())
+x = 52
 
-for i in range(10):
-    if s1[i] != s2[i]:
-        print(i)
+s1 = [input() for _ in range(x)]
+s2 = [input() for _ in range(x)]
+print(*[(s1[i], s2[i], i) for i in range(x) if (s1[i] != s2[i])], sep='\n')
